@@ -13,19 +13,28 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            HStack {
-                ForEach(0..<cardCount, id: \.self) { i in
-                    Card(content: emojis[i], isFaceUp: true)
-                }
-            }
-            HStack {
-                getCardAdjusterButton(adjustment: -1, iconSystemName: "rectangle.stack.badge.minus.fill")
-                    .disabled(cardCount == 1)
-                getCardAdjusterButton(adjustment: +1, iconSystemName: "rectangle.stack.fill.badge.plus")
-                    .disabled(cardCount == emojis.count)
-            }.font(.largeTitle)
+            cards
+            Spacer()
+            adjustmentButtons
         }
         .padding()
+    }
+    
+    var cards: some View {
+        LazyVGrid(columns: [GridItem(), GridItem(), GridItem()]){
+            ForEach(0..<cardCount, id: \.self) { i in
+                Card(content: emojis[i], isFaceUp: true)
+            }
+        }
+    }
+    
+    var adjustmentButtons: some View {
+        HStack {
+            getCardAdjusterButton(adjustment: -1, iconSystemName: "rectangle.stack.badge.minus.fill")
+                .disabled(cardCount == 1)
+            getCardAdjusterButton(adjustment: +1, iconSystemName: "rectangle.stack.fill.badge.plus")
+                .disabled(cardCount == emojis.count)
+        }.font(.largeTitle)
     }
     
     func getCardAdjusterButton(adjustment: Int, iconSystemName: String) -> some View {
