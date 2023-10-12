@@ -7,12 +7,25 @@
 
 import SwiftUI
 
+enum EmojiTheme {
+    case Halloween
+    case Food
+    // Emma's contributions
+    case Holiday
+}
+
 struct ContentView: View {
-    let emojis: [String] = ["🎃", "🕷️", "👻", "👹", "🎃", "🕷️", "👻", "👹", "🎃", "🕷️", "👻", "👹", "🎃", "🕷️", "👻", "👹"]
+    let emojis: Dictionary<EmojiTheme, [String]> = [
+        .Halloween: ["🎃", "🕷️", "👻", "👹", "🏚️", "💀", "🦇", "🧟‍♀️", "🕸️", "🪦", "⚰️", "🩸"],
+        .Food: ["🍇", "🌽", "🍉", "🍌", "🍊", "🍅", "🥔", "🍰", "☕️", "🥛", "🍟", "🍔"],
+        .Holiday: ["🎄", "🎁", "☃️", "⛷️", "🎅🏿", "🦌", "⭐️", "❄️", "🧣", "🍪", "🛷", "🕎"]
+    ]
     @State var cardCount = 4
+    @State var activeTheme: EmojiTheme = .Halloween
     
     var body: some View {
         VStack {
+            Text("Memorize!").font(.largeTitle).bold()
             ScrollView {
                 cards
             }
@@ -25,7 +38,7 @@ struct ContentView: View {
     var cards: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))]){
             ForEach(0..<cardCount, id: \.self) { i in
-                Card(content: emojis[i], isFaceUp: true)
+                Card(content: emojis[activeTheme]![i], isFaceUp: true)
                     .aspectRatio(2/3, contentMode: .fit)
             }
         }
@@ -35,9 +48,16 @@ struct ContentView: View {
         HStack {
             getCardAdjusterButton(adjustment: -1, iconSystemName: "rectangle.stack.badge.minus.fill")
                 .disabled(cardCount == 1)
+            Spacer()
+            Picker("Picker", selection: $activeTheme){
+                Text("Halloween").tag(EmojiTheme.Halloween)
+                Text("Food").tag(EmojiTheme.Food)
+                Text("Holiday").tag(EmojiTheme.Holiday)
+            }
+            Spacer()
             getCardAdjusterButton(adjustment: +1, iconSystemName: "rectangle.stack.fill.badge.plus")
                 .disabled(cardCount == emojis.count)
-        }.font(.largeTitle)
+        }.font(.largeTitle).padding()
     }
     
     func getCardAdjusterButton(adjustment: Int, iconSystemName: String) -> some View {
