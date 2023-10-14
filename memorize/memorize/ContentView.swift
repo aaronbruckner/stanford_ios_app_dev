@@ -85,6 +85,7 @@ struct ContentView: View {
     
     func regenerateActiveEmojis() -> Void {
         activeEmojis = generateEmojiPairs(emojiTheme: activeTheme, totalPairs: cardCount)
+        cardStates = [Bool](repeating: false, count: cardCount * 2)
     }
     
     struct Card: View {
