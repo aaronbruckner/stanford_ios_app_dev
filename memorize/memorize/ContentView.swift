@@ -32,6 +32,7 @@ struct ContentView: View {
     @State var cardCount = STARTING_CARD_PAIRS
     @State var activeTheme: EmojiTheme = DEFAULT_THEME
     @State var activeEmojis: [String] = generateEmojiPairs(emojiTheme: DEFAULT_THEME, totalPairs: STARTING_CARD_PAIRS)
+    @State var cardStates = [Bool](repeating: false, count: STARTING_CARD_PAIRS * 2)
     
     var body: some View {
         VStack {
@@ -48,8 +49,9 @@ struct ContentView: View {
     var cards: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 75))]){
             ForEach(0..<activeEmojis.count, id: \.self) { i in
-                Card(content: activeEmojis[i], isFaceUp: true)
-                    .aspectRatio(2/3, contentMode: .fit)
+                Card(content: activeEmojis[i], isFaceUp: cardStates[i]) {
+                    cardStates[i].toggle()
+                }.aspectRatio(2/3, contentMode: .fit)
             }
         }
     }
@@ -84,24 +86,25 @@ struct ContentView: View {
     func regenerateActiveEmojis() -> Void {
         activeEmojis = generateEmojiPairs(emojiTheme: activeTheme, totalPairs: cardCount)
     }
-}
-
-struct Card: View {
-    let content: String
-    @State var isFaceUp = true
     
-    var body: some View {
-        ZStack{
-            let base = RoundedRectangle(cornerRadius: 12)
-            Group {
-                base.foregroundColor(.white)
-                base.strokeBorder(lineWidth: 4)
-                Text(content).font(.largeTitle).padding()
-            }.opacity(isFaceUp ? 1 : 0)
-            base.fill().opacity(isFaceUp ? 0 : 1)
-            
-        }.onTapGesture {
-            isFaceUp.toggle()
+    struct Card: View {
+        let content: String
+        let isFaceUp: Bool
+        let onTap: () -> Void
+        
+        var body: some View {
+            ZStack{
+                let base = RoundedRectangle(cornerRadius: 12)
+                Group {
+                    base.foregroundColor(.white)
+                    base.strokeBorder(lineWidth: 4)
+                    Text(content).font(.largeTitle).padding()
+                }.opacity(isFaceUp ? 1 : 0)
+                base.fill().opacity(isFaceUp ? 0 : 1)
+                
+            }.onTapGesture {
+                onTap()
+            }
         }
     }
 }
