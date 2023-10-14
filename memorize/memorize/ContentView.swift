@@ -14,14 +14,24 @@ enum EmojiTheme {
     case Holiday
 }
 
+let emojisByTheme: Dictionary<EmojiTheme, [String]> = [
+    .Halloween: ["🎃", "🕷️", "👻", "👹", "🏚️", "💀", "🦇", "🧟‍♀️", "🕸️", "🪦", "⚰️", "🩸"],
+    .Food: ["🍇", "🌽", "🍉", "🍌", "🍊", "🍅", "🥔", "🍰", "☕️", "🥛", "🍟", "🍔"],
+    .Holiday: ["🎄", "🎁", "☃️", "⛷️", "🎅🏿", "🦌", "⭐️", "❄️", "🧣", "🍪", "🛷", "🕎"]
+]
+
+func generateEmojiPairs(emojiTheme: EmojiTheme, totalPairs: Int) -> [String] {
+    let selectedEmojis = emojisByTheme[emojiTheme]!.shuffled()[0..<totalPairs]
+    return (selectedEmojis + selectedEmojis).shuffled()
+}
+
+let DEFAULT_THEME = EmojiTheme.Halloween
+let STARTING_CARD_PAIRS = 4
+
 struct ContentView: View {
-    let emojis: Dictionary<EmojiTheme, [String]> = [
-        .Halloween: ["🎃", "🕷️", "👻", "👹", "🏚️", "💀", "🦇", "🧟‍♀️", "🕸️", "🪦", "⚰️", "🩸"],
-        .Food: ["🍇", "🌽", "🍉", "🍌", "🍊", "🍅", "🥔", "🍰", "☕️", "🥛", "🍟", "🍔"],
-        .Holiday: ["🎄", "🎁", "☃️", "⛷️", "🎅🏿", "🦌", "⭐️", "❄️", "🧣", "🍪", "🛷", "🕎"]
-    ]
-    @State var cardCount = 4
-    @State var activeTheme: EmojiTheme = .Halloween
+    @State var cardCount = STARTING_CARD_PAIRS
+    @State var activeTheme: EmojiTheme = DEFAULT_THEME
+    @State var activeEmojis: [String] = generateEmojiPairs(emojiTheme: DEFAULT_THEME, totalPairs: STARTING_CARD_PAIRS)
     
     var body: some View {
         VStack {
@@ -36,9 +46,9 @@ struct ContentView: View {
     }
     
     var cards: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))]){
-            ForEach(0..<cardCount, id: \.self) { i in
-                Card(content: emojis[activeTheme]![i], isFaceUp: true)
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 75))]){
+            ForEach(0..<activeEmojis.count, id: \.self) { i in
+                Card(content: activeEmojis[i], isFaceUp: true)
                     .aspectRatio(2/3, contentMode: .fit)
             }
         }
@@ -53,19 +63,26 @@ struct ContentView: View {
                 Text("Halloween").tag(EmojiTheme.Halloween)
                 Text("Food").tag(EmojiTheme.Food)
                 Text("Holiday").tag(EmojiTheme.Holiday)
+            }.onChange(of: activeTheme) {
+                regenerateActiveEmojis()
             }
             Spacer()
             getCardAdjusterButton(adjustment: +1, iconSystemName: "rectangle.stack.fill.badge.plus")
-                .disabled(cardCount == emojis.count)
+                .disabled(cardCount == emojisByTheme[activeTheme]!.count)
         }.font(.largeTitle).padding()
     }
     
     func getCardAdjusterButton(adjustment: Int, iconSystemName: String) -> some View {
         Button(action: {
             cardCount += adjustment
+            regenerateActiveEmojis()
         }, label: {
             Image(systemName: iconSystemName)
         })
+    }
+    
+    func regenerateActiveEmojis() -> Void {
+        activeEmojis = generateEmojiPairs(emojiTheme: activeTheme, totalPairs: cardCount)
     }
 }
 
