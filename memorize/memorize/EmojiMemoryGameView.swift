@@ -24,6 +24,11 @@ struct EmojiMemoryGameView: View {
             }
             Spacer()
             adjustmentButtons
+            Button(action: {
+                viewModel.shuffle()
+            }, label: {
+                Text("Shuffle")
+            })
         }
         .padding()
     }
@@ -83,6 +88,6 @@ struct EmojiMemoryGameView: View {
     }
 }
 
-//#Preview {
-//    EmojiMemoryGameView()
-//}
+#Preview {
+    EmojiMemoryGameView(viewModel: EmojiMemoryGameViewModel())
+}

@@ -9,7 +9,7 @@ import SwiftUI
 
 class EmojiMemoryGameViewModel: ObservableObject {    
     static let DEFAULT_THEME = EmojiTheme.Halloween
-    private static let STARTING_CARD_PAIRS = 4
+    private static let STARTING_CARD_PAIRS = 6
     private static func createModelWithTotalPairs(_ pairsOfCards: Int, theme: EmojiTheme) -> MemoryGame<String> {
         return MemoryGame<String>(pairsOfCards: pairsOfCards) { pairIndex in
             return emojisByTheme[theme]![pairIndex]
@@ -36,8 +36,8 @@ class EmojiMemoryGameViewModel: ObservableObject {
         return model.cards
     }
     
-    func modifyTotalPairsOfCards(by delta: Int) {
-        
+    func shuffle() {
+        model.shuffle()
     }
     
     func choose(_ card: MemoryGame<String>.Card) {
@@ -45,14 +45,14 @@ class EmojiMemoryGameViewModel: ObservableObject {
     }
     
     func onEmojiThemeChange(_ theme: EmojiTheme) {
-        
+        // TODO: Impl onEmojiThemeChange
     }
     
     func onCardCountIncrement() {
-        
+        // TODO: Impl onCardCountIncrement
     }
     
     func onCardCountDecrement() {
-        
+        // TODO: Impl onCardCountDecrement
     }
 }
