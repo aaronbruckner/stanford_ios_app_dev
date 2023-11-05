@@ -22,6 +22,7 @@ struct EmojiMemoryGameView: View {
             ScrollView {
                 cards
             }
+            .animation(.linear)
             Spacer()
             adjustmentButtons
             Button(action: {
@@ -35,8 +36,8 @@ struct EmojiMemoryGameView: View {
     
     var cards: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 75))]){
-            ForEach(0..<viewModel.cards.count, id: \.self) { i in
-                CardView(card: viewModel.cards[i])
+            ForEach(viewModel.cards) { card in
+                CardView(card: card)
                     .aspectRatio(2/3, contentMode: .fit)
             }
         }

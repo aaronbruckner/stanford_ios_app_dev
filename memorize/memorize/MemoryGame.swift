@@ -13,12 +13,13 @@ struct MemoryGame<CardContent> {
     init(pairsOfCards: Int, cardContentFactory: (Int) -> CardContent) {
         for pairIndex in 0 ..< pairsOfCards {
             let content = cardContentFactory(pairIndex)
-            cards.append(Card(content: content))
-            cards.append(Card(content: content))
+            cards.append(Card(id: "\(pairIndex)-A", content: content))
+            cards.append(Card(id: "\(pairIndex)-B", content: content))
         }
     }
     
-    struct Card {
+    struct Card: Identifiable {
+        let id: String
         var isFaceUp = true
         var isMatched = false
         let content: CardContent
