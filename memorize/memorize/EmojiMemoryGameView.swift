@@ -14,15 +14,10 @@ struct EmojiMemoryGameView: View {
     
     @ObservedObject var viewModel: EmojiMemoryGameViewModel
     
-    @State private var activeTheme: EmojiMemoryGameViewModel.EmojiTheme = EmojiMemoryGameViewModel.DEFAULT_THEME
-    
     var body: some View {
         VStack {
             Text("Memorize!").font(.largeTitle).bold()
-            ScrollView {
-                cards
-            }
-            .animation(.linear)
+            cards
             Spacer()
             adjustmentButtons
             Button(action: {
@@ -35,12 +30,14 @@ struct EmojiMemoryGameView: View {
     }
     
     var cards: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 75))]){
-            ForEach(viewModel.cards) { card in
-                CardView(card: card)
-                    .aspectRatio(2/3, contentMode: .fit)
+        ScrollView {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 75))]){
+                ForEach(viewModel.cards) { card in
+                    CardView(card: card)
+                        .aspectRatio(2/3, contentMode: .fit)
+                }
             }
-        }
+        }.animation(.linear)
     }
     
     var adjustmentButtons: some View {
@@ -48,12 +45,10 @@ struct EmojiMemoryGameView: View {
             getCardAdjusterButton(handler: viewModel.onCardCountDecrement, iconSystemName: "rectangle.stack.badge.minus.fill")
                 .disabled(viewModel.cards.count == EmojiMemoryGameView.MIN_CARD_COUNT)
             Spacer()
-            Picker("Picker", selection: $activeTheme){
+            Picker("Picker", selection: $viewModel.activeTheme){
                 Text("Halloween").tag(EmojiMemoryGameViewModel.EmojiTheme.Halloween)
                 Text("Food").tag(EmojiMemoryGameViewModel.EmojiTheme.Food)
                 Text("Holiday").tag(EmojiMemoryGameViewModel.EmojiTheme.Holiday)
-            }.onChange(of: activeTheme) {
-                viewModel.onEmojiThemeChange(activeTheme)
             }
             Spacer()
             getCardAdjusterButton(handler: viewModel.onCardCountIncrement, iconSystemName: "rectangle.stack.fill.badge.plus")

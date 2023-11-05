@@ -22,7 +22,14 @@ class EmojiMemoryGameViewModel: ObservableObject {
     ]
     
     @Published private var model = createModelWithTotalPairs(STARTING_CARD_PAIRS, theme: DEFAULT_THEME)
-    private var activeTheme: EmojiTheme = DEFAULT_THEME
+    @Published var activeTheme: EmojiTheme = DEFAULT_THEME {
+        didSet {
+            model = EmojiMemoryGameViewModel.createModelWithTotalPairs(
+                EmojiMemoryGameViewModel.STARTING_CARD_PAIRS,
+                theme: activeTheme
+            )
+        }
+    }
 
     
     enum EmojiTheme {
