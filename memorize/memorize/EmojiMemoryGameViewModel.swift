@@ -44,6 +44,10 @@ class EmojiMemoryGameViewModel: ObservableObject {
             )
         }
     }
+    
+    var score: Int {
+        model.score
+    }
 
     
     enum EmojiTheme {

@@ -8,6 +8,7 @@
 import Foundation
 
 struct MemoryGame<CardContent: Equatable> {
+    private(set) var score: Int = 0
     private(set) var cards: [Card] = []
     private var lastPickedCard: Card?
     
@@ -24,8 +25,15 @@ struct MemoryGame<CardContent: Equatable> {
         var isFaceUp = false
         var isMatched = false
         let content: CardContent
+        var badPickScore: Int {
+            pickCount > 1 ? -1 : 0
+        }
+        private(set) var pickCount = 0
         
         mutating func flip() -> Card {
+            if !isFaceUp {
+                pickCount += 1
+            }
             isFaceUp.toggle()
             return self
         }
@@ -43,6 +51,8 @@ struct MemoryGame<CardContent: Equatable> {
             return
         }
         
+        flipCardAtIndex(selectedIndex)
+        
         if let lastPickedCard = self.lastPickedCard {
             let lastPickedIndex = self.cards.firstIndex(where: {$0.id == lastPickedCard.id})!
             // User has made previous select and this is the second choice, see if the two selected cards match
@@ -53,12 +63,11 @@ struct MemoryGame<CardContent: Equatable> {
             lastPickedCard = card
             // Flip all other cards currently face up
             for (i, card) in cards.enumerated() {
-                if card.isFaceUp && !card.isMatched {
+                if card.isFaceUp && !card.isMatched && i != selectedIndex{
                     flipCardAtIndex(i)
                 }
             }
         }
-        flipCardAtIndex(selectedIndex)
     }
     
     private mutating func flipCardAtIndex(_ i: Int) {
@@ -69,6 +78,9 @@ struct MemoryGame<CardContent: Equatable> {
         if cards[index1].content == cards[index2].content {
             markMatched(index1)
             markMatched(index2)
+            score += 2
+        } else {
+            score += cards[index1].badPickScore + cards[index2].badPickScore
         }
     }
     

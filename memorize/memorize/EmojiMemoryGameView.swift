@@ -14,6 +14,7 @@ struct EmojiMemoryGameView: View {
     var body: some View {
         VStack {
             Text("Memorize!").font(.largeTitle).bold()
+            Text("Score: \(viewModel.score)").font(.subheadline)
             cards
             Spacer()
             adjustmentButtons
