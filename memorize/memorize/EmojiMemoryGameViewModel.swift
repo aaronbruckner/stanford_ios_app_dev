@@ -61,12 +61,8 @@ class EmojiMemoryGameViewModel: ObservableObject {
         model.shuffle()
     }
     
-    func choose(_ card: MemoryGame<String>.Card) {
-        model.choose(card)
-    }
-    
-    func onEmojiThemeChange(_ theme: EmojiTheme) {
-        // TODO: Impl onEmojiThemeChange
+    func chooseCard(_ card: MemoryGame<String>.Card) {
+        model.chooseCard(card)
     }
     
     func onCardCountIncrement() {

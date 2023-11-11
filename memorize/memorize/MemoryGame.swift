@@ -23,13 +23,22 @@ struct MemoryGame<CardContent> {
         var isFaceUp = true
         var isMatched = false
         let content: CardContent
+        
+        mutating func flip() -> Card {
+            isFaceUp.toggle()
+            return self
+        }
     }
     
     mutating func shuffle() {
         cards.shuffle()
     }
     
-    mutating func choose(_ card: Card) {
-
+    mutating func chooseCard(_ card: Card) {
+        flipCardAtIndex(cards.firstIndex(where: {$0.id == card.id})!)
+    }
+    
+    private mutating func flipCardAtIndex(_ i: Int) {
+        cards[i] = cards[i].flip()
     }
 }

@@ -30,7 +30,9 @@ struct EmojiMemoryGameView: View {
         ScrollView {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 75))]){
                 ForEach(viewModel.cards) { card in
-                    CardView(card: card)
+                    CardView(card: card) {
+                        viewModel.chooseCard(card)
+                    }
                         .aspectRatio(2/3, contentMode: .fit)
                 }
             }
@@ -69,6 +71,7 @@ struct EmojiMemoryGameView: View {
     
     private struct CardView: View {
         let card: MemoryGame<String>.Card
+        let onClick: () -> Void
         
         var body: some View {
             ZStack{
@@ -81,7 +84,7 @@ struct EmojiMemoryGameView: View {
                 base.fill().opacity(card.isFaceUp ? 0 : 1)
                 
             }.onTapGesture {
-                // TODO Handle tap
+                onClick()
             }
         }
     }
