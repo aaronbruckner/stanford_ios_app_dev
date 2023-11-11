@@ -9,11 +9,17 @@ import SwiftUI
 
 class EmojiMemoryGameViewModel: ObservableObject {    
     static let DEFAULT_THEME = EmojiTheme.Halloween
+    static let MIN_CARD_PAIRS = 2
+    static let MAX_CARD_PAIRS = 12
     private static let STARTING_CARD_PAIRS = 6
     private static func createModelWithTotalPairs(_ pairsOfCards: Int, theme: EmojiTheme) -> MemoryGame<String> {
-        return MemoryGame<String>(pairsOfCards: pairsOfCards) { pairIndex in
+        var memoryGame = MemoryGame<String>(pairsOfCards: pairsOfCards) { pairIndex in
             return emojisByTheme[theme]![pairIndex]
         }
+        
+        memoryGame.shuffle()
+        
+        return memoryGame
     }
     private static let emojisByTheme: Dictionary<EmojiTheme, [String]> = [
         .Halloween: ["🎃", "🕷️", "👻", "👹", "🏚️", "💀", "🦇", "🧟‍♀️", "🕸️", "🪦", "⚰️", "🩸"],
@@ -22,10 +28,18 @@ class EmojiMemoryGameViewModel: ObservableObject {
     ]
     
     @Published private var model = createModelWithTotalPairs(STARTING_CARD_PAIRS, theme: DEFAULT_THEME)
+    @Published private (set) var totalPairs = STARTING_CARD_PAIRS {
+        didSet {
+            model = EmojiMemoryGameViewModel.createModelWithTotalPairs(
+                totalPairs,
+                theme: activeTheme
+            )
+        }
+    }
     @Published var activeTheme: EmojiTheme = DEFAULT_THEME {
         didSet {
             model = EmojiMemoryGameViewModel.createModelWithTotalPairs(
-                EmojiMemoryGameViewModel.STARTING_CARD_PAIRS,
+                totalPairs,
                 theme: activeTheme
             )
         }
@@ -56,10 +70,14 @@ class EmojiMemoryGameViewModel: ObservableObject {
     }
     
     func onCardCountIncrement() {
-        // TODO: Impl onCardCountIncrement
+        if totalPairs < EmojiMemoryGameViewModel.MAX_CARD_PAIRS {
+            totalPairs += 1
+        }
     }
     
     func onCardCountDecrement() {
-        // TODO: Impl onCardCountDecrement
+        if totalPairs > EmojiMemoryGameViewModel.MIN_CARD_PAIRS {
+            totalPairs -= 1
+        }
     }
 }

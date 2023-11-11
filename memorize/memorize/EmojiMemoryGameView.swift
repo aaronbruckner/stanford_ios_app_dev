@@ -9,9 +9,6 @@ import SwiftUI
 
 
 struct EmojiMemoryGameView: View {
-    private static let MIN_CARD_COUNT: Int = 2
-    private static let MAX_CARD_COUNT: Int = 24
-    
     @ObservedObject var viewModel: EmojiMemoryGameViewModel
     
     var body: some View {
@@ -43,7 +40,10 @@ struct EmojiMemoryGameView: View {
     var adjustmentButtons: some View {
         HStack {
             getCardAdjusterButton(handler: viewModel.onCardCountDecrement, iconSystemName: "rectangle.stack.badge.minus.fill")
-                .disabled(viewModel.cards.count == EmojiMemoryGameView.MIN_CARD_COUNT)
+                .disabled(viewModel.totalPairs == EmojiMemoryGameViewModel.MIN_CARD_PAIRS)
+                .onTapGesture {
+                    viewModel.onCardCountDecrement()
+                }
             Spacer()
             Picker("Picker", selection: $viewModel.activeTheme){
                 Text("Halloween").tag(EmojiMemoryGameViewModel.EmojiTheme.Halloween)
@@ -52,7 +52,10 @@ struct EmojiMemoryGameView: View {
             }
             Spacer()
             getCardAdjusterButton(handler: viewModel.onCardCountIncrement, iconSystemName: "rectangle.stack.fill.badge.plus")
-                .disabled(viewModel.cards.count == EmojiMemoryGameView.MAX_CARD_COUNT)
+                .disabled(viewModel.totalPairs == EmojiMemoryGameViewModel.MAX_CARD_PAIRS)
+                .onTapGesture {
+                    viewModel.onCardCountIncrement()
+                }
         }.font(.largeTitle).padding()
     }
     
